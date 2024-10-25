@@ -11,14 +11,19 @@
 static vu8 buffersReady;
 static void* frameBuffer;
 
-#define VERT_COUNT 3
-f32 vertPositions[VERT_COUNT * 3] ATTRIBUTE_ALIGN(32) = {
-	0.0f, 15.0f, 0.0f,
+f32 vertPositions[] ATTRIBUTE_ALIGN(32) = {
+	-15.0f, 15.0f, 0.0f,
 	-15.0f, -15.0f, 0.0f,
-	15.0f, -15.0f, 0
+	15.0f, -15.0f, 0.0f,
+	15.0f, 15.0f, 0.0f,
 };
 
-u8 vertColors[VERT_COUNT * 4] ATTRIBUTE_ALIGN(32) = {
+u32 vertIndices[] ATTRIBUTE_ALIGN(32) = {
+	0, 1, 2,
+	1, 2, 3,
+};
+
+u8 vertColors[] ATTRIBUTE_ALIGN(32) = {
 	255, 0, 0, 255,
 	0, 255, 0, 255,
 	0, 0, 255, 255,
@@ -82,10 +87,6 @@ int main(int argc, char** argv) {
 	Mtx view;
 	Mtx model;
 	while(1) {
-		vertPositions[3] = cos(angle) * 15;
-		vertPositions[5] = sin(angle) * 15;
-		vertPositions[6] = cos(angle - M_PI) * 15;
-		vertPositions[8] = sin(angle - M_PI) * 15;
 		angle += 0.1f;
 		guLookAt(view, &camera, &up, &look);
 		GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
@@ -93,16 +94,18 @@ int main(int argc, char** argv) {
 		GX_InvalidateTexAll();
 
 		guMtxIdentity(model);
+		guMtxRotRad(model, 'y', angle);
 		guMtxTransApply(model, model, 0.0f, 0.0f, -50.0f);
 		guMtxConcat(view, model, model);
 
 		GX_LoadPosMtxImm(model, GX_PNMTX0);
 
-		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
+		u32 indexCount = sizeof(vertIndices)/sizeof(vertIndices[0]);
+		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, indexCount);
 
-		for(u8 i = 0; i < VERT_COUNT; ++i) {
-			GX_Position1x8(i);
-			GX_Color1x8(i);
+		for(u8 i = 0; i < indexCount; ++i) {
+			GX_Position1x8(vertIndices[i]);
+			GX_Color1x8(i%3);
 		}
 
 		GX_End();
