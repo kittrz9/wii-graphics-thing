@@ -83,9 +83,15 @@ int main(int argc, char** argv) {
 		GX_InvVtxCache();
 		GX_InvalidateTexAll();
 
+		// why cant you rotate a matrix over multiple axises???
+		Mtx rx;
 		guMtxIdentity(model);
 		guMtxRotRad(model, 'y', angle);
-		guMtxTransApply(model, model, 0.0f, 0.0f, -20.0f);
+		guMtxApplyScale(model, model, 10.0f, 10.0f, 10.0f);
+		guMtxIdentity(rx);
+		guMtxRotDeg(rx, 'x', 45);
+		guMtxConcat(model, rx, model);
+		guMtxTransApply(view, view, 0.0f, 0.0f, -50.0f);
 		guMtxConcat(view, model, model);
 
 		GX_LoadPosMtxImm(model, GX_PNMTX0);
