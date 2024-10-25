@@ -40,7 +40,7 @@ def main():
 	for v in vertices:
 		print(f"{v},", end='')
 	print("\n};")
-	print("u8 vertIndices[] ATTRIBUTE_ALIGN(32) = {")
+	print("u16 vertIndices[] ATTRIBUTE_ALIGN(32) = {")
 	for i in indices:
 		print(f"{i},", end='')
 	print("\n};")

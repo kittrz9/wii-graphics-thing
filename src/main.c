@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 	GX_LoadProjectionMtx(projection, GX_PERSPECTIVE);
 
 	GX_ClearVtxDesc();
-	GX_SetVtxDesc(GX_VA_POS, GX_INDEX8);
+	GX_SetVtxDesc(GX_VA_POS, GX_INDEX16);
 	GX_SetVtxDesc(GX_VA_CLR0, GX_INDEX8);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
@@ -92,8 +92,8 @@ int main(int argc, char** argv) {
 
 		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, indexCount);
 
-		for(u8 i = 0; i < indexCount; ++i) {
-			GX_Position1x8(vertIndices[i]);
+		for(u32 i = 0; i < indexCount; ++i) {
+			GX_Position1x16(vertIndices[i]);
 			GX_Color1x8(i%3);
 		}
 
