@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 	Mtx view;
 	Mtx model;
 	while(1) {
-		angle += 0.1f;
+		angle += 0.05f;
 		guLookAt(view, &camera, &up, &look);
 		guMtxTransApply(view, view, 0.0f, 0.0f, -50.0f);
 
@@ -125,8 +125,6 @@ int main(int argc, char** argv) {
 		GX_End();
 
 		GX_DrawDone();
-
-		VIDEO_WaitVSync();
 
 		buffersReady = GX_TRUE;
 
