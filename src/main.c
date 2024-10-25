@@ -6,22 +6,12 @@
 #include <wiiuse/wpad.h>
 #include <math.h>
 
+#include "model.h"
+
 #define FIFO_SIZE (256*1024)
 
 static vu8 buffersReady;
 static void* frameBuffer;
-
-f32 vertPositions[] ATTRIBUTE_ALIGN(32) = {
-	-15.0f, 15.0f, 0.0f,
-	-15.0f, -15.0f, 0.0f,
-	15.0f, -15.0f, 0.0f,
-	15.0f, 15.0f, 0.0f,
-};
-
-u32 vertIndices[] ATTRIBUTE_ALIGN(32) = {
-	0, 1, 2,
-	1, 2, 3,
-};
 
 u8 vertColors[] ATTRIBUTE_ALIGN(32) = {
 	255, 0, 0, 255,
@@ -95,12 +85,11 @@ int main(int argc, char** argv) {
 
 		guMtxIdentity(model);
 		guMtxRotRad(model, 'y', angle);
-		guMtxTransApply(model, model, 0.0f, 0.0f, -50.0f);
+		guMtxTransApply(model, model, 0.0f, 0.0f, -20.0f);
 		guMtxConcat(view, model, model);
 
 		GX_LoadPosMtxImm(model, GX_PNMTX0);
 
-		u32 indexCount = sizeof(vertIndices)/sizeof(vertIndices[0]);
 		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, indexCount);
 
 		for(u8 i = 0; i < indexCount; ++i) {

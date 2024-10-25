@@ -30,17 +30,17 @@ def main():
 		if(lineData[0] == "f"):
 			for i in range(1,4):
 				faceElements = lineData[i].split('/')
-				indices.append(faceElements[0])
+				indices.append(int(faceElements[0])-1)
 
 
 	print("#include <gccore.h>")
 	print(f"u32 vertCount = {len(vertices)};");
 	print(f"u32 indexCount = {len(indices)};");
-	print("f32 vertPositions[] = {")
+	print("f32 vertPositions[] ATTRIBUTE_ALIGN(32) = {")
 	for v in vertices:
 		print(f"{v},", end='')
 	print("\n};")
-	print("u8 vertIndices[] = {")
+	print("u8 vertIndices[] ATTRIBUTE_ALIGN(32) = {")
 	for i in indices:
 		print(f"{i},", end='')
 	print("\n};")
