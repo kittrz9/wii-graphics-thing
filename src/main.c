@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	GX_SetCopyFilter(screenMode->aa, screenMode->sample_pattern, GX_TRUE, screenMode->vfilter);
 	GX_SetFieldMode(screenMode->field_rendering, ((screenMode->viHeight==2*screenMode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 
-	GX_SetCullMode(GX_CULL_NONE);
+	GX_SetCullMode(GX_CULL_FRONT);
 	GX_CopyDisp(frameBuffer, GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 
