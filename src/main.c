@@ -14,12 +14,12 @@ static vu8 buffersReady;
 static void* frameBuffer;
 
 u8 vertColors[] ATTRIBUTE_ALIGN(32) = {
-	255, 0, 0, 255,
+	/*255, 0, 0, 255,
 	0, 255, 0, 255,
-	0, 0, 255, 255,
-	/*255,255,255,255,
+	0, 0, 255, 255,*/
 	255,255,255,255,
-	255,255,255,255,*/
+	255,255,255,255,
+	255,255,255,255,
 };
 
 static void copyBuffers(u32 unused);
@@ -88,14 +88,6 @@ int main(int argc, char** argv) {
 		angle += 0.1f;
 		guLookAt(view, &camera, &up, &look);
 		guMtxTransApply(view, view, 0.0f, 0.0f, -50.0f);
-		GXLightObj light;
-		guVector lightPos = {10,10,-10};
-		guVecMultiply(view, &lightPos, &lightPos);
-		GX_InitLightPos(&light, lightPos.x, lightPos.y, lightPos.z);
-		GX_InitLightColor(&light, (GXColor){255,255,255,255});
-		GX_InitLightSpot(&light, 0.0f, GX_SP_OFF);
-		GX_InitLightDistAttn(&light, 20.0f, 1.0f, GX_DA_MEDIUM);
-		GX_LoadLightObj(&light, 1);
 
 		GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
 		GX_InvVtxCache();
@@ -110,6 +102,15 @@ int main(int argc, char** argv) {
 		guMtxRotDeg(rx, 'x', 45);
 		guMtxConcat(model, rx, model);
 		guMtxConcat(view, model, model);
+
+		GXLightObj light;
+		guVector lightPos = {-200,200,-200};
+		guVecMultiply(model, &lightPos, &lightPos);
+		GX_InitLightPos(&light, lightPos.x, lightPos.y, lightPos.z);
+		GX_InitLightColor(&light, (GXColor){255,255,255,255});
+		GX_InitLightSpot(&light, 0.0f, GX_SP_OFF);
+		GX_InitLightDistAttn(&light, 20.0f, 1.0f, GX_DA_MEDIUM);
+		GX_LoadLightObj(&light, 1);
 
 		GX_LoadPosMtxImm(model, GX_PNMTX0);
 
