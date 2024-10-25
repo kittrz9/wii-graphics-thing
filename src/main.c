@@ -17,6 +17,9 @@ u8 vertColors[] ATTRIBUTE_ALIGN(32) = {
 	255, 0, 0, 255,
 	0, 255, 0, 255,
 	0, 0, 255, 255,
+	/*255,255,255,255,
+	255,255,255,255,
+	255,255,255,255,*/
 };
 
 static void copyBuffers(u32 unused);
@@ -48,7 +51,7 @@ int main(int argc, char** argv) {
 	GX_SetCopyFilter(screenMode->aa, screenMode->sample_pattern, GX_TRUE, screenMode->vfilter);
 	GX_SetFieldMode(screenMode->field_rendering, ((screenMode->viHeight==2*screenMode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 
-	GX_SetCullMode(GX_CULL_FRONT);
+	GX_SetCullMode(GX_CULL_BACK);
 	GX_CopyDisp(frameBuffer, GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 
@@ -63,11 +66,16 @@ int main(int argc, char** argv) {
 	GX_ClearVtxDesc();
 	GX_SetVtxDesc(GX_VA_POS, GX_INDEX16);
 	GX_SetVtxDesc(GX_VA_CLR0, GX_INDEX8);
+	GX_SetVtxDesc(GX_VA_NRM, GX_INDEX16);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_NRM, GX_NRM_XYZ, GX_F32, 0);
 	GX_SetArray(GX_VA_POS, vertPositions, 3*sizeof(f32));
 	GX_SetArray(GX_VA_CLR0, vertColors, 4*sizeof(u8));
+	GX_SetArray(GX_VA_NRM, normals, 3*sizeof(f32));
+
 	GX_SetNumChans(1);
+	GX_SetChanCtrl(GX_COLOR0A0, GX_ENABLE, GX_SRC_REG, GX_SRC_VTX, 1, GX_DF_CLAMP, GX_AF_SPOT);
 	GX_SetNumTexGens(0);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
@@ -79,6 +87,16 @@ int main(int argc, char** argv) {
 	while(1) {
 		angle += 0.1f;
 		guLookAt(view, &camera, &up, &look);
+		guMtxTransApply(view, view, 0.0f, 0.0f, -50.0f);
+		GXLightObj light;
+		guVector lightPos = {10,10,-10};
+		guVecMultiply(view, &lightPos, &lightPos);
+		GX_InitLightPos(&light, lightPos.x, lightPos.y, lightPos.z);
+		GX_InitLightColor(&light, (GXColor){255,255,255,255});
+		GX_InitLightSpot(&light, 0.0f, GX_SP_OFF);
+		GX_InitLightDistAttn(&light, 20.0f, 1.0f, GX_DA_MEDIUM);
+		GX_LoadLightObj(&light, 1);
+
 		GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
 		GX_InvVtxCache();
 		GX_InvalidateTexAll();
@@ -91,7 +109,6 @@ int main(int argc, char** argv) {
 		guMtxIdentity(rx);
 		guMtxRotDeg(rx, 'x', 45);
 		guMtxConcat(model, rx, model);
-		guMtxTransApply(view, view, 0.0f, 0.0f, -50.0f);
 		guMtxConcat(view, model, model);
 
 		GX_LoadPosMtxImm(model, GX_PNMTX0);
@@ -100,6 +117,7 @@ int main(int argc, char** argv) {
 
 		for(u32 i = 0; i < indexCount; ++i) {
 			GX_Position1x16(vertIndices[i]);
+			GX_Normal1x16(normalIndices[i]);
 			GX_Color1x8(i%3);
 		}
 
