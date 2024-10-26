@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
 
 	GX_SetNumChans(1);
 	GX_SetChanCtrl(GX_COLOR0A0, GX_ENABLE, GX_SRC_REG, GX_SRC_VTX, 1, GX_DF_CLAMP, GX_AF_SPOT);
+	GX_SetChanAmbColor(GX_COLOR0A0, (GXColor){64, 64, 64, 255});
 	GX_SetNumTexGens(0);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
@@ -104,7 +105,7 @@ int main(int argc, char** argv) {
 		guMtxConcat(view, model, model);
 
 		GXLightObj light;
-		guVector lightPos = {-200,200,-200};
+		guVector lightPos = {100,100,-100};
 		guVecMultiply(model, &lightPos, &lightPos);
 		GX_InitLightPos(&light, lightPos.x, lightPos.y, lightPos.z);
 		GX_InitLightColor(&light, (GXColor){255,255,255,255});
